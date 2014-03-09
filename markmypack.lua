@@ -1,13 +1,14 @@
 PLUGIN.Title = "Mark My Pack"
 PLUGIN.Description = "(Experimental) Marks your death location with a Wood Storage Box, to make it easier to find your body & pack."
 PLUGIN.Author = "Gliktch"
-PLUGIN.Version = "0.1"
+PLUGIN.Version = "0.3"
 
 function PLUGIN:Init()
     self:AddChatCommand("box", self.cmdBox)
 end
 
 function PLUGIN:MarkSpot( netuser, x, y, z )
+    print("testing box...")
     local spawn = util.FindOverloadedMethod( Rust.NetCull._type, "InstantiateStatic", bf.public_static, { System.String, UnityEngine.Vector3, UnityEngine.Quaternion } )
     print("MMP: spawn var is " .. tostring(spawn))
     local v = new(UnityEngine.Vector3)
@@ -18,7 +19,7 @@ function PLUGIN:MarkSpot( netuser, x, y, z )
     v.x = x
     print("MMP: x var is " .. tostring(x))
     print("MMP: v.x var is " .. tostring(v.x))
-    v.y = y
+    v.y = ( y - 2 )
     print("MMP: y var is " .. tostring(y))
     print("MMP: v.y var is " .. tostring(v.y))
     v.z = z
@@ -55,7 +56,10 @@ function PLUGIN:MarkSpot( netuser, x, y, z )
 end
 
 function PLUGIN:cmdBox( netuser, cmd, args )
+    print("box command running...")
     local coords = netuser.playerClient.lastKnownPosition;
-    self.MarkSpot( netuser, coords.x, coords.y, coords.z )
+    print("coords: " .. tostring(coords))
+    self.MarkSpot( netuser, "dummy", coords.x, coords.y, coords.z )
+    print("should be a box now...")
     rust.SendChatToUser( netuser, "Ermagerd, berx!" )
 end
